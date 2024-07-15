@@ -8,16 +8,16 @@ app = Flask(__name__)
 rabbitmq_host = os.getenv('RABBITMQ_HOST', 'production-rabbitmqcluster')
 celery = Celery('tasks', broker=f'amqp://guest:guest@{rabbitmq_host}:5672//', backend='rpc://')
 
-exchange = Exchange('quorum_exchange', type='direct')
+exchange = Exchange('classic_exchange', type='direct')
 
 celery.conf.update(
-    task_default_queue='quorum_queue_ziv',
+    task_default_queue='classic_queue_ziv',
     task_queues=(
-        Queue('quorum_queue_ziv', exchange=exchange, routing_key='quorum_queue_ziv',
-              queue_arguments={'x-queue-type': 'quorum', 'x-quorum-initial-group-size': 3}),
+        Queue('classic_queue_ziv', exchange=exchange, routing_key='classic_queue_ziv',
+              queue_arguments={'ha-mode': 'all'}),
     ),
-    task_default_exchange='quorum_exchange',
-    task_default_routing_key='quorum_queue_ziv'
+    task_default_exchange='classic_exchange',
+    task_default_routing_key='classic_queue_ziv'
 )
 
 @app.route('/produce', methods=['POST'])

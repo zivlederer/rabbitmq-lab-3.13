@@ -1,2 +1,2 @@
-celery==5.4.0
-kombu==5.3.7
+celery==5.3.0
+kombu==5.3.0
